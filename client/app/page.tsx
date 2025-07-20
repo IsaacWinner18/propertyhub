@@ -143,7 +143,7 @@ export default function HomePage() {
                 Enugu
               </span>
             </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed text-gray-200">
+            <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto leading-relaxed text-gray-200">
               From luxury apartments to cozy short-stays, find the perfect
               property that matches your lifestyle and budget in the heart of
               Enugu State.
@@ -161,7 +161,7 @@ export default function HomePage() {
                     />
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   </div>
-                  <button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center">
+                  <button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 md:py-4 px-4 md:px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center">
                     <Search className="h-5 w-5 mr-2" />
                     Find Properties
                   </button>
@@ -190,7 +190,7 @@ export default function HomePage() {
       </section>
 
       {/* Animated Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto my-16">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-4 md:mx-auto my-16 ">
         {stats.map((stat, i) => {
           const ref = useRef(null);
           const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -244,7 +244,7 @@ export default function HomePage() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Featured Properties
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-md md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Discover our handpicked selection of premium properties across
               Enugu, from luxury homes to affordable short-stay apartments.
             </p>
