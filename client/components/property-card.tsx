@@ -32,12 +32,12 @@ interface AvailabilityStatus {
 }
 
 const defaultAgent: Required<Agent> = {
-  name: "Unknown Agent",
+  name: "known Agent",
   avatar: "/placeholder.svg?height=32&width=32",
   isVerified: false,
 };
 
-interface PropertyCardProps {
+export interface PropertyCardProps {
   id: string;
   title: string;
   location: string;

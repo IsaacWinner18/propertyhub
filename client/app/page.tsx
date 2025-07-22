@@ -10,106 +10,107 @@ import Newsletter from "@/components/newsletter";
 import WhatsAppChat from "@/components/whatsapp-chat";
 import { Search, Eye, Key, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import PropertyList from "@/components/property-list";
 
-const featuredProperties = [
-  {
-    id: "1",
-    title: "Luxury Modern Apartment in Independence Layout",
-    location: "Independence Layout, Enugu",
-    price: "₦2,500,000",
-    type: "rent" as const,
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 1200,
-    images: [
-      "/placeholder.svg?height=256&width=400",
-      "/placeholder.svg?height=256&width=400",
-      "/placeholder.svg?height=256&width=400",
-    ],
-    agent: {
-      name: "Sarah Johnson",
-      avatar: "/placeholder.svg?height=32&width=32",
-      isVerified: true,
-    },
-    availability: {
-      isAvailable: true,
-    },
-  },
-  {
-    id: "2",
-    title: "Executive Family Duplex in GRA",
-    location: "GRA Enugu, Enugu",
-    price: "₦85,000,000",
-    type: "sale" as const,
-    bedrooms: 5,
-    bathrooms: 4,
-    area: 3200,
-    images: [
-      "/placeholder.svg?height=256&width=400",
-      "/placeholder.svg?height=256&width=400",
-      "/placeholder.svg?height=256&width=400",
-    ],
-    agent: {
-      name: "Mike Chen",
-      avatar: "/placeholder.svg?height=32&width=32",
-      isVerified: true,
-    },
-    availability: {
-      isAvailable: false,
-      availableFrom: "March 15, 2024",
-      occupiedUntil: "March 14, 2024",
-      daysRemaining: 45,
-    },
-  },
-  {
-    id: "3",
-    title: "Cozy Studio Apartment - Perfect for Short Stays",
-    location: "New Haven, Enugu",
-    price: "₦250,000",
-    type: "apartment" as const,
-    bedrooms: 1,
-    bathrooms: 1,
-    area: 650,
-    images: [
-      "/placeholder.svg?height=256&width=400",
-      "/placeholder.svg?height=256&width=400",
-    ],
-    agent: {
-      name: "Emma Davis",
-      avatar: "/placeholder.svg?height=32&width=32",
-      isVerified: false,
-    },
-    availability: {
-      isAvailable: false,
-      availableFrom: "February 28, 2024",
-      occupiedUntil: "February 27, 2024",
-      daysRemaining: 12,
-    },
-  },
-  {
-    id: "4",
-    title: "Beautiful Townhouse in Trans Ekulu",
-    location: "Trans Ekulu, Enugu",
-    price: "₦45,000,000",
-    type: "sale" as const,
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 2100,
-    images: [
-      "/placeholder.svg?height=256&width=400",
-      "/placeholder.svg?height=256&width=400",
-      "/placeholder.svg?height=256&width=400",
-    ],
-    agent: {
-      name: "Tom Wilson",
-      avatar: "/placeholder.svg?height=32&width=32",
-      isVerified: true,
-    },
-    availability: {
-      isAvailable: true,
-    },
-  },
-];
+// const featuredProperties = [
+//   {
+//     id: "1",
+//     title: "Luxury Modern Apartment in Independence Layout",
+//     location: "Independence Layout, Enugu",
+//     price: "₦2,500,000",
+//     type: "rent" as const,
+//     bedrooms: 3,
+//     bathrooms: 2,
+//     area: 1200,
+//     images: [
+//       "/placeholder.svg?height=256&width=400",
+//       "/placeholder.svg?height=256&width=400",
+//       "/placeholder.svg?height=256&width=400",
+//     ],
+//     agent: {
+//       name: "Sarah Johnson",
+//       avatar: "/placeholder.svg?height=32&width=32",
+//       isVerified: true,
+//     },
+//     availability: {
+//       isAvailable: true,
+//     },
+//   },
+//   {
+//     id: "2",
+//     title: "Executive Family Duplex in GRA",
+//     location: "GRA Enugu, Enugu",
+//     price: "₦85,000,000",
+//     type: "sale" as const,
+//     bedrooms: 5,
+//     bathrooms: 4,
+//     area: 3200,
+//     images: [
+//       "/placeholder.svg?height=256&width=400",
+//       "/placeholder.svg?height=256&width=400",
+//       "/placeholder.svg?height=256&width=400",
+//     ],
+//     agent: {
+//       name: "Mike Chen",
+//       avatar: "/placeholder.svg?height=32&width=32",
+//       isVerified: true,
+//     },
+//     availability: {
+//       isAvailable: false,
+//       availableFrom: "March 15, 2024",
+//       occupiedUntil: "March 14, 2024",
+//       daysRemaining: 45,
+//     },
+//   },
+//   {
+//     id: "3",
+//     title: "Cozy Studio Apartment - Perfect for Short Stays",
+//     location: "New Haven, Enugu",
+//     price: "₦250,000",
+//     type: "apartment" as const,
+//     bedrooms: 1,
+//     bathrooms: 1,
+//     area: 650,
+//     images: [
+//       "/placeholder.svg?height=256&width=400",
+//       "/placeholder.svg?height=256&width=400",
+//     ],
+//     agent: {
+//       name: "Emma Davis",
+//       avatar: "/placeholder.svg?height=32&width=32",
+//       isVerified: false,
+//     },
+//     availability: {
+//       isAvailable: false,
+//       availableFrom: "February 28, 2024",
+//       occupiedUntil: "February 27, 2024",
+//       daysRemaining: 12,
+//     },
+//   },
+//   {
+//     id: "4",
+//     title: "Beautiful Townhouse in Trans Ekulu",
+//     location: "Trans Ekulu, Enugu",
+//     price: "₦45,000,000",
+//     type: "sale" as const,
+//     bedrooms: 4,
+//     bathrooms: 3,
+//     area: 2100,
+//     images: [
+//       "/placeholder.svg?height=256&width=400",
+//       "/placeholder.svg?height=256&width=400",
+//       "/placeholder.svg?height=256&width=400",
+//     ],
+//     agent: {
+//       name: "Tom Wilson",
+//       avatar: "/placeholder.svg?height=32&width=32",
+//       isVerified: true,
+//     },
+//     availability: {
+//       isAvailable: true,
+//     },
+//   },
+// ];
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -251,10 +252,10 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-3 gap-2 md:gap-3">
-            {featuredProperties.map((property) => (
-              <PropertyCard key={property.id} {...property} />
-            ))}
+            <PropertyList />
           </div>
+
+         
 
           <div className="text-center mt-12">
             <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center mx-auto">
