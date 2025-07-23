@@ -8,14 +8,29 @@ config();
 const app = express();
 const PORT = process.env.PORT;
 const MONGODB_URI = process.env.MONGODB_URI;
-app.use(cors())
+app.use(
+  cors({
+    origin: process.env.CORS || "http://localhost:3000",
+  })
+);
 
 app.use(express.json());
 
-// Register property routes
 app.use(propertyRoutes);
 
-app.listen(PORT, () => {
-  mongoose.connect(`${MONGODB_URI}`);
-  console.log(`Listening on PORT ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await mongoose.connect(MONGODB_URI);
+    console.log("✅ MongoDB connected");
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to connect to MongoDB:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
+
