@@ -4,20 +4,103 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import Header from "@/components/header"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
+
+// API base URL - adjust this to match your server
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+
+// Types
+interface LoginResponse {
+  success: boolean
+  message: string
+  data?: {
+    user: {
+      id: string
+      fullName: string
+      email: string
+      signupMethod: string
+      role: string
+      lastLoggedIn: string
+      isEmailVerified: boolean
+    }
+    tokens: {
+      accessToken: string
+      refreshToken: string
+    }
+  }
+}
 
 export default function LoginPage() {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [rememberMe, setRememberMe] = useState(false)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Store tokens in localStorage/sessionStorage
+  const storeTokens = (tokens: { accessToken: string; refreshToken: string }) => {
+    const storage = rememberMe ? localStorage : sessionStorage
+    storage.setItem('accessToken', tokens.accessToken)
+    storage.setItem('refreshToken', tokens.refreshToken)
+  }
+
+  // Store user data
+  const storeUserData = (user: any) => {
+    const storage = rememberMe ? localStorage : sessionStorage
+    storage.setItem('userData', JSON.stringify(user))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle login logic
-    console.log("Login attempt:", formData)
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          loginMethod: 'local'
+        }),
+      })
+
+      const data: LoginResponse = await response.json()
+
+      if (data.success && data.data) {
+        // Store tokens and user data
+        storeTokens(data.data.tokens)
+        storeUserData(data.data.user)
+        
+        // Redirect to dashboard or home page
+        router.push('/') // Adjust redirect path as needed
+      } else {
+        setError(data.message || 'Login failed')
+      }
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('Network error. Please check your connection and try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Handle OAuth login (placeholder for Google/Facebook)
+  const handleOAuthLogin = async (provider: 'google' | 'facebook') => {
+    setError(null)
+    // TODO: Implement OAuth login
+    // This would typically redirect to OAuth provider
+    console.log(`${provider} login clicked`)
+    setError(`${provider} login not implemented yet`)
   }
 
   return (
@@ -32,6 +115,12 @@ export default function LoginPage() {
           </div>
 
           <div className="card p-8">
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -41,7 +130,8 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   required
-                  className="input-field"
+                  disabled={isLoading}
+                  className="input-field disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
@@ -57,14 +147,16 @@ export default function LoginPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    className="input-field pr-12"
+                    disabled={isLoading}
+                    className="input-field pr-12 disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                    disabled={isLoading}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 disabled:opacity-50"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -78,7 +170,13 @@ export default function LoginPage() {
 
               <div className="flex items-center justify-between">
                 <label className="flex items-center">
-                  <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                  <input 
+                    type="checkbox" 
+                    disabled={isLoading}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50" 
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
                   <span className="ml-2 text-sm text-gray-600">Remember me</span>
                 </label>
 
@@ -87,8 +185,19 @@ export default function LoginPage() {
                 </Link>
               </div>
 
-              <button type="submit" className="btn-primary w-full">
-                Sign In
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                    Signing In...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
               </button>
             </form>
 
@@ -103,7 +212,12 @@ export default function LoginPage() {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <button className="btn-secondary flex items-center justify-center">
+                <button 
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => handleOAuthLogin('google')}
+                  className="btn-secondary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
@@ -125,7 +239,12 @@ export default function LoginPage() {
                   Google
                 </button>
 
-                <button className="btn-secondary flex items-center justify-center">
+                <button 
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => handleOAuthLogin('facebook')}
+                  className="btn-secondary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>

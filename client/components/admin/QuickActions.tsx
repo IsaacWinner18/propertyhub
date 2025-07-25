@@ -6,8 +6,10 @@ import { useState } from "react";
 
 export default function QuickActions({
   onAddListing,
+  onRefresh,
 }: {
   onAddListing: () => void;
+  onRefresh?: () => void;
 }) {
   return (
     <div className="card">
@@ -30,7 +32,7 @@ export default function QuickActions({
               </div>
             </div>
           </button>
-
+{/* 
           <Link
             href="/admin/users"
             className="block p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
@@ -44,22 +46,24 @@ export default function QuickActions({
                 </p>
               </div>
             </div>
-          </Link>
+          </Link> */}
 
-          <Link
-            href="/admin/analytics"
-            className="block p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
-          >
-            <div className="flex items-center">
-              <BarChart3 className="h-8 w-8 text-purple-600 mr-3" />
-              <div>
-                <h4 className="font-medium text-gray-900">View Analytics</h4>
-                <p className="text-sm text-gray-600">
-                  Check performance metrics
-                </p>
+          {onRefresh && (
+            <button
+              onClick={onRefresh}
+              className="w-full text-left p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+            >
+              <div className="flex items-center">
+                <BarChart3 className="h-8 w-8 text-purple-600 mr-3" />
+                <div>
+                  <h4 className="font-medium text-gray-900">Refresh Data</h4>
+                  <p className="text-sm text-gray-600">
+                    Update dashboard metrics
+                  </p>
+                </div>
               </div>
-            </div>
-          </Link>
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -12,105 +12,7 @@ import { Search, Eye, Key, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import PropertyList from "@/components/property-list";
 
-// const featuredProperties = [
-//   {
-//     id: "1",
-//     title: "Luxury Modern Apartment in Independence Layout",
-//     location: "Independence Layout, Enugu",
-//     price: "₦2,500,000",
-//     type: "rent" as const,
-//     bedrooms: 3,
-//     bathrooms: 2,
-//     area: 1200,
-//     images: [
-//       "/placeholder.svg?height=256&width=400",
-//       "/placeholder.svg?height=256&width=400",
-//       "/placeholder.svg?height=256&width=400",
-//     ],
-//     agent: {
-//       name: "Sarah Johnson",
-//       avatar: "/placeholder.svg?height=32&width=32",
-//       isVerified: true,
-//     },
-//     availability: {
-//       isAvailable: true,
-//     },
-//   },
-//   {
-//     id: "2",
-//     title: "Executive Family Duplex in GRA",
-//     location: "GRA Enugu, Enugu",
-//     price: "₦85,000,000",
-//     type: "sale" as const,
-//     bedrooms: 5,
-//     bathrooms: 4,
-//     area: 3200,
-//     images: [
-//       "/placeholder.svg?height=256&width=400",
-//       "/placeholder.svg?height=256&width=400",
-//       "/placeholder.svg?height=256&width=400",
-//     ],
-//     agent: {
-//       name: "Mike Chen",
-//       avatar: "/placeholder.svg?height=32&width=32",
-//       isVerified: true,
-//     },
-//     availability: {
-//       isAvailable: false,
-//       availableFrom: "March 15, 2024",
-//       occupiedUntil: "March 14, 2024",
-//       daysRemaining: 45,
-//     },
-//   },
-//   {
-//     id: "3",
-//     title: "Cozy Studio Apartment - Perfect for Short Stays",
-//     location: "New Haven, Enugu",
-//     price: "₦250,000",
-//     type: "apartment" as const,
-//     bedrooms: 1,
-//     bathrooms: 1,
-//     area: 650,
-//     images: [
-//       "/placeholder.svg?height=256&width=400",
-//       "/placeholder.svg?height=256&width=400",
-//     ],
-//     agent: {
-//       name: "Emma Davis",
-//       avatar: "/placeholder.svg?height=32&width=32",
-//       isVerified: false,
-//     },
-//     availability: {
-//       isAvailable: false,
-//       availableFrom: "February 28, 2024",
-//       occupiedUntil: "February 27, 2024",
-//       daysRemaining: 12,
-//     },
-//   },
-//   {
-//     id: "4",
-//     title: "Beautiful Townhouse in Trans Ekulu",
-//     location: "Trans Ekulu, Enugu",
-//     price: "₦45,000,000",
-//     type: "sale" as const,
-//     bedrooms: 4,
-//     bathrooms: 3,
-//     area: 2100,
-//     images: [
-//       "/placeholder.svg?height=256&width=400",
-//       "/placeholder.svg?height=256&width=400",
-//       "/placeholder.svg?height=256&width=400",
-//     ],
-//     agent: {
-//       name: "Tom Wilson",
-//       avatar: "/placeholder.svg?height=32&width=32",
-//       isVerified: true,
-//     },
-//     availability: {
-//       isAvailable: true,
-//     },
-//   },
-// ];
+
 
 export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -190,8 +92,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Animated Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-4 md:mx-auto my-16 ">
+      {/* Featured Listings */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50">
+          <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 ">
+            <div className="text-center mb-16">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+                Featured Properties
+              </h2>
+              <p className="text-sm md:text-md text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Discover our handpicked selection of premium properties across
+                Enugu, from luxury homes to affordable short-stay apartments.
+              </p>
+            </div>
+
+            <div className=" lg:px-8 py-8 max-w-7xl mx-auto w-full">
+              <PropertyList />
+            </div>
+
+            <div className="text-center mt-12">
+              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center mx-auto">
+                View All Properties
+                <ArrowRight className="h-5 w-5 ml-2" />
+              </button>
+            </div>
+          </div>
+      </section>
+      {/* <FilterSection /> */}
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-4 md:mx-auto my-16 ">
         {stats.map((stat, i) => {
           const ref = useRef(null);
           const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -235,45 +163,14 @@ export default function HomePage() {
         })}
       </div>
 
-      {/* Filter Section */}
-      <FilterSection />
-
-      {/* Featured Listings */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Featured Properties
-            </h2>
-            <p className="text-md md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Discover our handpicked selection of premium properties across
-              Enugu, from luxury homes to affordable short-stay apartments.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 p-3 gap-2 md:gap-3">
-            <PropertyList />
-          </div>
-
-         
-
-          <div className="text-center mt-12">
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center mx-auto">
-              View All Properties
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* How It Works */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6">
               How PropertyHub Works
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-sm md:text-xl text-gray-600 max-w-3xl mx-auto">
               Finding your perfect property in Enugu has never been easier.
               Follow these simple steps to get started.
             </p>

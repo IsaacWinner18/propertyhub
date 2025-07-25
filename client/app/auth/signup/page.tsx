@@ -4,12 +4,41 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import Header from "@/components/header"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
+
+// API base URL - adjust this to match your server
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+
+// Types
+interface SignupResponse {
+  success: boolean
+  message: string
+  data?: {
+    user: {
+      id: string
+      fullName: string
+      email: string
+      signupMethod: string
+      role: string
+      isEmailVerified: boolean
+      createdAt: string
+    }
+    tokens: {
+      accessToken: string
+      refreshToken: string
+    }
+  }
+}
 
 export default function SignupPage() {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({})
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,10 +47,111 @@ export default function SignupPage() {
     agreeToTerms: false,
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Store tokens in localStorage
+  const storeTokens = (tokens: { accessToken: string; refreshToken: string }) => {
+    localStorage.setItem('accessToken', tokens.accessToken)
+    localStorage.setItem('refreshToken', tokens.refreshToken)
+  }
+
+  // Store user data
+  const storeUserData = (user: any) => {
+    localStorage.setItem('userData', JSON.stringify(user))
+  }
+
+  // Client-side validation
+  const validateForm = (): boolean => {
+    const errors: {[key: string]: string} = {}
+
+    // Name validation
+    if (!formData.name.trim()) {
+      errors.name = 'Full name is required'
+    } else if (formData.name.trim().length < 2) {
+      errors.name = 'Full name must be at least 2 characters'
+    }
+
+    // Email validation
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required'
+    } else if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address'
+    }
+
+    // Password validation
+    if (!formData.password) {
+      errors.password = 'Password is required'
+    } else if (formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters long'
+    }
+
+    // Confirm password validation
+    if (!formData.confirmPassword) {
+      errors.confirmPassword = 'Please confirm your password'
+    } else if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match'
+    }
+
+    // Terms validation
+    if (!formData.agreeToTerms) {
+      errors.agreeToTerms = 'You must agree to the Terms of Service and Privacy Policy'
+    }
+
+    setValidationErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle signup logic
-    console.log("Signup attempt:", formData)
+    setIsLoading(true)
+    setError(null)
+    setValidationErrors({})
+
+    // Client-side validation
+    if (!validateForm()) {
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: formData.name.trim(),
+          email: formData.email.trim(),
+          password: formData.password,
+          signupMethod: 'local'
+        }),
+      })
+
+      const data: SignupResponse = await response.json()
+
+      if (data.success && data.data) {
+        // Store tokens and user data
+        storeTokens(data.data.tokens)
+        storeUserData(data.data.user)
+        
+        // Redirect to dashboard or welcome page
+        router.push('/dashboard') // Adjust redirect path as needed
+      } else {
+        setError(data.message || 'Signup failed')
+      }
+    } catch (err) {
+      console.error('Signup error:', err)
+      setError('Network error. Please check your connection and try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Handle OAuth signup (placeholder for Google/Facebook)
+  const handleOAuthSignup = async (provider: 'google' | 'facebook') => {
+    setError(null)
+    // TODO: Implement OAuth signup
+    // This would typically redirect to OAuth provider
+    console.log(`${provider} signup clicked`)
+    setError(`${provider} signup not implemented yet`)
   }
 
   return (
@@ -36,6 +166,12 @@ export default function SignupPage() {
           </div>
 
           <div className="card p-8">
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -45,11 +181,22 @@ export default function SignupPage() {
                   id="name"
                   type="text"
                   required
-                  className="input-field"
+                  disabled={isLoading}
+                  className={`input-field disabled:opacity-50 disabled:cursor-not-allowed ${
+                    validationErrors.name ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                  }`}
                   placeholder="Enter your full name"
                   value={formData.name}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => {
+                    setFormData((prev) => ({ ...prev, name: e.target.value }))
+                    if (validationErrors.name) {
+                      setValidationErrors(prev => ({ ...prev, name: '' }))
+                    }
+                  }}
                 />
+                {validationErrors.name && (
+                  <p className="mt-1 text-sm text-red-600">{validationErrors.name}</p>
+                )}
               </div>
 
               <div>
@@ -60,11 +207,22 @@ export default function SignupPage() {
                   id="email"
                   type="email"
                   required
-                  className="input-field"
+                  disabled={isLoading}
+                  className={`input-field disabled:opacity-50 disabled:cursor-not-allowed ${
+                    validationErrors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                  }`}
                   placeholder="Enter your email"
                   value={formData.email}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) => {
+                    setFormData((prev) => ({ ...prev, email: e.target.value }))
+                    if (validationErrors.email) {
+                      setValidationErrors(prev => ({ ...prev, email: '' }))
+                    }
+                  }}
                 />
+                {validationErrors.email && (
+                  <p className="mt-1 text-sm text-red-600">{validationErrors.email}</p>
+                )}
               </div>
 
               <div>
@@ -76,14 +234,23 @@ export default function SignupPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    className="input-field pr-12"
-                    placeholder="Create a password"
+                    disabled={isLoading}
+                    className={`input-field pr-12 disabled:opacity-50 disabled:cursor-not-allowed ${
+                      validationErrors.password ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                    }`}
+                    placeholder="Create a password (min. 6 characters)"
                     value={formData.password}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
+                    onChange={(e) => {
+                      setFormData((prev) => ({ ...prev, password: e.target.value }))
+                      if (validationErrors.password) {
+                        setValidationErrors(prev => ({ ...prev, password: '' }))
+                      }
+                    }}
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                    disabled={isLoading}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 disabled:opacity-50"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -93,6 +260,9 @@ export default function SignupPage() {
                     )}
                   </button>
                 </div>
+                {validationErrors.password && (
+                  <p className="mt-1 text-sm text-red-600">{validationErrors.password}</p>
+                )}
               </div>
 
               <div>
@@ -104,14 +274,23 @@ export default function SignupPage() {
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     required
-                    className="input-field pr-12"
+                    disabled={isLoading}
+                    className={`input-field pr-12 disabled:opacity-50 disabled:cursor-not-allowed ${
+                      validationErrors.confirmPassword ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                    }`}
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                    onChange={(e) => {
+                      setFormData((prev) => ({ ...prev, confirmPassword: e.target.value }))
+                      if (validationErrors.confirmPassword) {
+                        setValidationErrors(prev => ({ ...prev, confirmPassword: '' }))
+                      }
+                    }}
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                    disabled={isLoading}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 disabled:opacity-50"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? (
@@ -121,16 +300,27 @@ export default function SignupPage() {
                     )}
                   </button>
                 </div>
+                {validationErrors.confirmPassword && (
+                  <p className="mt-1 text-sm text-red-600">{validationErrors.confirmPassword}</p>
+                )}
               </div>
 
               <div>
-                <label className="flex items-center">
+                <label className="flex items-start">
                   <input
                     type="checkbox"
                     required
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    disabled={isLoading}
+                    className={`mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50 ${
+                      validationErrors.agreeToTerms ? 'border-red-300' : ''
+                    }`}
                     checked={formData.agreeToTerms}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, agreeToTerms: e.target.checked }))}
+                    onChange={(e) => {
+                      setFormData((prev) => ({ ...prev, agreeToTerms: e.target.checked }))
+                      if (validationErrors.agreeToTerms) {
+                        setValidationErrors(prev => ({ ...prev, agreeToTerms: '' }))
+                      }
+                    }}
                   />
                   <span className="ml-2 text-sm text-gray-600">
                     I agree to the{" "}
@@ -143,10 +333,24 @@ export default function SignupPage() {
                     </Link>
                   </span>
                 </label>
+                {validationErrors.agreeToTerms && (
+                  <p className="mt-1 text-sm text-red-600">{validationErrors.agreeToTerms}</p>
+                )}
               </div>
 
-              <button type="submit" className="btn-primary w-full">
-                Create Account
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                    Creating Account...
+                  </>
+                ) : (
+                  'Create Account'
+                )}
               </button>
             </form>
 
@@ -161,7 +365,12 @@ export default function SignupPage() {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <button className="btn-secondary flex items-center justify-center">
+                <button 
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => handleOAuthSignup('google')}
+                  className="btn-secondary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
@@ -183,7 +392,12 @@ export default function SignupPage() {
                   Google
                 </button>
 
-                <button className="btn-secondary flex items-center justify-center">
+                <button 
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => handleOAuthSignup('facebook')}
+                  className="btn-secondary flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>

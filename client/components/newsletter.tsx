@@ -35,8 +35,8 @@ export default function Newsletter() {
             <Mail className="h-8 w-8 text-white" />
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Stay Updated with PropertyHub</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-4">Stay Updated with PropertyHub</h2>
+          <p className="text-sm md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
             Get the latest property listings, market insights, and exclusive deals delivered straight to your inbox.
           </p>
 

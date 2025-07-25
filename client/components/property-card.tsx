@@ -136,7 +136,7 @@ export default function PropertyCard({
 
   return (
     <div
-      className="group relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-lg border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:bg-white/90"
+      className="relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-lg border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:bg-white/90 w-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(true)}
     >
@@ -162,11 +162,11 @@ export default function PropertyCard({
       </div>
 
       {/* Image Carousel */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-80 overflow-hidden">
         <Image
           src={safeImages[currentImageIndex]}
           alt={title}
-          width={400}
+          width={500}
           height={256}
           className="w-full h-full object-cover transition-transform duration-700 scale-110"
         />
@@ -251,13 +251,15 @@ export default function PropertyCard({
       </div>
 
       {/* Content */}
-      <div className="p-4 md:p-6 space-y-4">
+      <div className="p-2 md:p-4 space-y-4">
         <div>
-          <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
+          <h3 className="text-md font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
             {title}
           </h3>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-blue-600">{price}</span>
+            <span className="text-xl font-bold text-blue-600">
+              ₦{Number(price).toLocaleString("en-NG")}
+            </span>
             {type === "rent" && <span className="text-gray-600">/month</span>}
             {type === "apartment" && (
               <span className="text-gray-600">/night</span>

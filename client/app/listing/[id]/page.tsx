@@ -274,7 +274,7 @@ export default function ListingDetailPage() {
                   <span>{property.location}</span>
                 </div>
                 <div className="text-3xl font-bold text-blue-600 mb-4">
-                  {property.price}
+                  {property.price ? `₦${Number(property.price).toLocaleString()}` : "-"}
                   {property.type === "rent" && (
                     <span className="text-lg text-gray-600">/month</span>
                   )}

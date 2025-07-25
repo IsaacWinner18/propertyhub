@@ -126,3 +126,60 @@ export const getProperties = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getDashboardStats = async (req, res) => {
+  try {
+    const totalListings = await Property.countDocuments();
+    const pendingApprovals = await Property.countDocuments({ status: 'pending' });
+    const activeListings = await Property.countDocuments({ 'availability.isAvailable': true });
+    
+    // Get recent 5 listings
+    const recentListings = await Property.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select('title type price status agent availability');
+
+    res.status(200).json({
+      stats: [
+        {
+          label: 'Total Listings',
+          value: totalListings.toString(),
+          change: '+0%', // You can implement actual change calculation if needed
+          icon: 'Building2',
+          color: 'blue'
+        },
+        {
+          label: 'Pending Approvals',
+          value: pendingApprovals.toString(),
+          change: '+0%',
+          icon: 'Eye',
+          color: 'orange'
+        },
+        {
+          label: 'Active Listings',
+          value: activeListings.toString(),
+          change: '+0%',
+          icon: 'TrendingUp',
+          color: 'green'
+        },
+        {
+          label: 'Total Users',
+          value: '0', // Will be updated by user controller
+          change: '+0%',
+          icon: 'Users',
+          color: 'purple'
+        }
+      ],
+      recentListings: recentListings.map(listing => ({
+        id: listing._id,
+        title: listing.title,
+        type: listing.type,
+        price: `$${listing.price}`,
+        status: listing.availability?.isAvailable ? 'Active' : 'Inactive',
+        agent: listing.agent?.name || 'N/A'
+      }))
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

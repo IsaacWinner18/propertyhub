@@ -30,19 +30,14 @@ const sidebarItems = [
     icon: Plus,
     href: "/admin/listings/new",
   },
-  { id: "users", label: "Users", icon: Users, href: "/admin/users" },
-  {
-    id: "analytics",
-    label: "Analytics",
-    icon: BarChart3,
-    href: "/admin/analytics",
-  },
-  {
-    id: "settings",
-    label: "Settings",
-    icon: Settings,
-    href: "/admin/settings",
-  },
+  // { id: "users", label: "Users", icon: Users, href: "/admin/users" },
+
+  // {
+  //   id: "settings",
+  //   label: "Settings",
+  //   icon: Settings,
+  //   href: "/admin/settings",
+  // },
 ];
 
 export default function Sidebar({
