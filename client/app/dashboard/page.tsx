@@ -80,7 +80,11 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      
+      <div>
+        Coming Soon!
+      </div>
+      {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:w-64">
@@ -381,7 +385,7 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-      </div>
+      </div> */}
 
       <Footer />
     </div>
