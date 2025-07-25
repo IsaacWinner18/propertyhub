@@ -80,13 +80,10 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      
-      <div>
-        Coming Soon!
-      </div>
+      <div>Coming Soon!</div>
       {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Navigation */}
+          {/* Sidebar Navigation 
           <div className="lg:w-64">
             <div className="card p-6">
               <div className="flex items-center space-x-3 mb-6">
@@ -143,7 +140,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="flex-1">
             {activeTab === "overview" && (
               <div className="space-y-6">
@@ -152,7 +148,6 @@ export default function DashboardPage() {
                   <p className="text-gray-600">Welcome back! Here's what's happening with your property search.</p>
                 </div>
 
-                {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="card p-6">
                     <div className="flex items-center">
@@ -191,7 +186,6 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* Recent Activity */}
                 <div className="card p-6">
                   <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
                   <div className="space-y-4">
@@ -385,9 +379,9 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-      </div> */}
+      </div>  */}
 
       <Footer />
     </div>
-  )
+  );
 }
