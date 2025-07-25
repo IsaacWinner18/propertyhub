@@ -9,7 +9,7 @@ import Header from "@/components/header"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 
 // API base URL - adjust this to match your server
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // Types
 interface LoginResponse {

@@ -1,5 +1,5 @@
 // Authentication utility functions
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URI || 'http://localhost:3001';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URI;
 
 // Types
 export interface User {
