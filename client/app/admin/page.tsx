@@ -170,23 +170,16 @@ export default function AdminDashboard() {
     };
   }, [sidebarOpen]);
 
-  // Hide AddListing when switching back to dashboard
   React.useEffect(() => {
     if (activeItem === "dashboard") {
       setShowAddListing(false);
     }
   }, [activeItem]);
 
-  // Dummy submit handler for now
-  const handleAddListingSubmit = (listing: ListingForm) => {
-    // TODO: send to backend
-    setShowAddListing(false);
-    // Optionally, show a toast or update listings
-  };
+  
 
   return (
     <div className=" bg-gray-300 flex">
-      {/* Sidebar: only visible as static on md and above */}
       <div className="hidden md:block w-64 h-screen bg-white border-r shadow-sm static z-30">
         <Sidebar
           activeItem={activeItem}
@@ -196,7 +189,6 @@ export default function AdminDashboard() {
           onAddListing={() => setShowAddListing(true)}
         />
       </div>
-      {/* Sidebar overlay for mobile (below md) */}
       <div className="block md:hidden">
         <Sidebar
           activeItem={activeItem}

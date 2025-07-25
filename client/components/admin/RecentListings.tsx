@@ -35,7 +35,7 @@ export default function RecentListings({ listings }: { listings: Listing[] }) {
               <div className="flex-1">
                 <h4 className="font-medium text-gray-900">{listing.title}</h4>
                 <p className="text-sm text-gray-600">
-                  {listing.agent} • {listing.type} • {listing.price}
+                  {listing.agent} • {listing.type} • ₦{listing.price}
                 </p>
               </div>
               <span

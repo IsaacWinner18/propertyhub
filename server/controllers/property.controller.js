@@ -1,4 +1,5 @@
 import Property from "../models/listing.model.js";
+import User, { USER_ROLES } from "../models/user.model.js";
 
 export const addProperty = async (req, res) => {
   try {
@@ -129,9 +130,17 @@ export const getProperties = async (req, res) => {
 
 export const getDashboardStats = async (req, res) => {
   try {
+    // Property statistics
     const totalListings = await Property.countDocuments();
     const pendingApprovals = await Property.countDocuments({ status: 'pending' });
     const activeListings = await Property.countDocuments({ 'availability.isAvailable': true });
+    
+    // User statistics
+    const totalUsers = await User.countDocuments();
+    const totalAgents = await User.countDocuments({ role: USER_ROLES.AGENT });
+    const totalAdmins = await User.countDocuments({ 
+      role: { $in: [USER_ROLES.ADMIN, USER_ROLES.SUPER_ADMIN] } 
+    });
     
     // Get recent 5 listings
     const recentListings = await Property.find()
@@ -142,9 +151,17 @@ export const getDashboardStats = async (req, res) => {
     res.status(200).json({
       stats: [
         {
+          label: 'Total Users',
+          value: totalUsers.toString(),
+          change: '+0%',
+          icon: 'Users',
+          color: 'green'
+        },
+        
+        {
           label: 'Total Listings',
           value: totalListings.toString(),
-          change: '+0%', // You can implement actual change calculation if needed
+          change: '+0%',
           icon: 'Building2',
           color: 'blue'
         },
@@ -162,19 +179,12 @@ export const getDashboardStats = async (req, res) => {
           icon: 'TrendingUp',
           color: 'green'
         },
-        {
-          label: 'Total Users',
-          value: '0', // Will be updated by user controller
-          change: '+0%',
-          icon: 'Users',
-          color: 'purple'
-        }
       ],
       recentListings: recentListings.map(listing => ({
         id: listing._id,
         title: listing.title,
         type: listing.type,
-        price: `$${listing.price}`,
+        price: `${listing.price}`,
         status: listing.availability?.isAvailable ? 'Active' : 'Inactive',
         agent: listing.agent?.name || 'N/A'
       }))
